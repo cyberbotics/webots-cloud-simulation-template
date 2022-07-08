@@ -11,7 +11,7 @@ The `E-puck.proto` PROTO is located in the `protos` folder.
 The defined `Dockerfile` is placed at the root of the project and implements the four lines of `Dockerfile.default`, which would have been used by [webots.cloud](webots.cloud) if no Dockerfile was defined.
 
 ```dockerfile
-FROM cyberbotics/webots:R2022b-ubuntu20.04
+FROM cyberbotics/webots.cloud:R2022b
 ARG PROJECT_PATH
 RUN mkdir -p $PROJECT_PATH
 COPY . $PROJECT_PATH
