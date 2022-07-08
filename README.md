@@ -24,6 +24,8 @@ RUN cd $PROJECT_PATH/controllers/e-puck && make clean && make
 RUN cd $PROJECT_PATH/plugins/remote_controls && make clean && make
 ```
 
+**Note**: It is also possible to directly provide the built binaries in the corresponding folders and use the default Dockerfile without any "on-the-fly" compilation.
+
 `webots.yaml` defines the type of the simulation as a `demo`.
 The `publish` parameter allows to publish the simulation to [webots.cloud](webots.cloud) and make it visible in the public list of simulations.
 Finally, `dockerCompose:theia` sets the workspace for the online IDE.
