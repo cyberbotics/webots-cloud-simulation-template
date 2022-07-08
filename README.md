@@ -29,6 +29,6 @@ RUN cd $PROJECT_PATH/plugins/remote_controls && make clean && make
 `webots.yaml` defines the type of the simulation as a `demo`.
 The `publish` parameter allows to publish the simulation to [webots.cloud](webots.cloud) and make it visible in the public list of simulations.
 Finally, `dockerCompose:theia` sets the workspace for the online IDE.
-This means that with `webots-project/controllers/` every user which connects to the simulation is allowed to edit all controllers located in the `controllers` folder.
+This means that with `webots-project/controllers/` each user which connects to the simulation is allowed to edit all controllers located in the `controllers` folder.
 
 More information is available in the [Webots User Guide](https://cyberbotics.com/doc/guide/webots-cloud?version=master#publish-cloud-based-simulations).
