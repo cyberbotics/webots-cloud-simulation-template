@@ -8,7 +8,7 @@ The controller `e-puck.c` is located in the `controllers/e-puck` folder.
 The `remote_controls` plugin, as well as the `e-puck` robot window, are located in the `plugins` folder.
 The `E-puck.proto` PROTO is located in the `protos` folder.
 
-The defined `Dockerfile` is placed at the root of the project and implements the four lines of `Dockerfile.default`.
+The defined `Dockerfile` is placed at the root of the project and implements the four lines of `Dockerfile.default`, which would have been used by [webots.cloud](webots.cloud) if no Dockerfile was defined.
 
 ```dockerfile
 FROM cyberbotics/webots:R2022b-ubuntu20.04
@@ -17,7 +17,6 @@ RUN mkdir -p $PROJECT_PATH
 COPY . $PROJECT_PATH
 ```
 
-This default Dockerfile is used under the hood by [webots.cloud](webots.cloud) in case no Dockerfile is defined at the root of the repository.
 The following two additional lines allow to compile the controller and the plugin when [webots.cloud](webots.cloud) creates the Docker image.
 
 ```dockerfile
