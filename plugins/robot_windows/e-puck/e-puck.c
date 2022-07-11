@@ -35,9 +35,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "../../remote_controls/e-puck_bluetooth/UploaderData.hpp"
-
-static WbDeviceTag ps[8], ls[8], tof, accelerometer, gyro, camera, gs[3], motors[2], position_sensors[2];
+static WbDeviceTag ps[8], ls[8], tof, accelerometer, gyro, camera, gs[3],
+    motors[2], position_sensors[2];
 static const int N_SENSORS = sizeof(ps) / sizeof(WbDeviceTag);
 static int gs_sensors_count = 0;
 static bool configured = false;
@@ -86,7 +85,7 @@ static void send_ports() {
     text[k++] = ' ';
     for (j = 0; j < strlen(ports[i]); j++) {
       if (ports[i][j] == '\\')
-        text[k++] = '\\';  // escape character
+        text[k++] = '\\'; // escape character
       text[k++] = ports[i][j];
     }
   }
@@ -142,22 +141,6 @@ void wb_robot_window_init() {
     gs_sensors_count = 0;
 }
 
-static void upload_progress_callback(int i, int j) {
-  static int jj = -1;
-  if (i == 2)
-    wb_robot_wwi_send_text("upload reset");
-  else {
-    if (j != jj) {
-      char buffer[64];
-      sprintf(buffer, "upload %d", j);
-      wb_robot_wwi_send_text(buffer);
-      if (j == 99)
-        wb_robot_wwi_send_text("upload complete");
-      jj = j;
-    }
-  }
-}
-
 void wb_robot_window_step(int time_step) {
   int i;
   const char *message;
@@ -185,48 +168,15 @@ void wb_robot_window_step(int time_step) {
       send_ports();
     else if (strcmp(message, "simulation") == 0)
       wb_robot_set_mode(WB_MODE_SIMULATION, NULL);
-    else if (strncmp(message, "remote control ", 15) == 0)
-      wb_robot_set_mode(WB_MODE_REMOTE_CONTROL, &message[15]);
-    else if (strncmp(message, "upload ", 7) == 0) {
-      char *port;
-      const char *p = &message[7];
-      int n = strchr(p, ' ') - p;
-      port = (char *)malloc(n + 1);
-      strncpy(port, p, n);
-      port[n] = '\0';
-      struct UploaderData upload;
-      upload.command = UPLOADER_DATA_CONNECT;
-      upload.data = port;
-      wb_remote_control_custom_function(&upload);
-      free(port);
-      const char *data = &message[8 + n];
-      const char *path = wbu_system_short_path(wbu_system_webots_instance_path(false));
-      const char *filename = "e-puck.hex";
-      char *full_path = (char *)malloc(strlen(path) + strlen(filename) + 1);
-      sprintf(full_path, "%s%s", path, filename);
-      FILE *fd = fopen(full_path, "wb");
-      if (fd == NULL)
-        fprintf(stderr, "Cannot open %s for writting\n", full_path);
-      else {
-        fwrite(data, 1, strlen(data), fd);
-        fclose(fd);
-        upload.command = UPLOADER_DATA_SEND_FILE;
-        upload.robot_id = 100;
-        upload.data = full_path;
-        upload.progress_callback = upload_progress_callback;
-        wb_remote_control_custom_function(&upload);
-        upload.command = UPLOADER_DATA_DISCONNECT;
-        wb_remote_control_custom_function(&upload);
-      }
-      free(full_path);
-    } else if (strncmp(message, "connect ", 8) == 0) {
+    else if (strncmp(message, "connect ", 8) == 0) {
       wb_robot_set_mode(WB_MODE_REMOTE_CONTROL, &message[8]);
       fprintf(stderr, "Connected to %s\n", &message[8]);
     } else if (strncmp(message, "disconnect", 10) == 0) {
       wb_robot_set_mode(WB_MODE_SIMULATION, NULL);
       fprintf(stderr, "Disconnected from e-puck2\n");
     } else
-      fprintf(stderr, "received unknown message from robot window: %s\n", message);
+      fprintf(stderr, "received unknown message from robot window: %s\n",
+              message);
   }
   if (!configured)
     return;
@@ -293,7 +243,8 @@ void wb_robot_window_step(int time_step) {
   if (strlen(update) + strlen(update_message) < UPDATE_MESSAGE_SIZE)
     strcat(update_message, update);
 
-  if (areDevicesReady && wb_position_sensor_get_sampling_period(position_sensors[0])) {
+  if (areDevicesReady &&
+      wb_position_sensor_get_sampling_period(position_sensors[0])) {
     const double value = wb_position_sensor_get_value(position_sensors[0]);
     if (isnan(value))
       snprintf(update, UPDATE_SIZE, "left_wheel_position ");
@@ -304,7 +255,8 @@ void wb_robot_window_step(int time_step) {
   if (strlen(update) + strlen(update_message) < UPDATE_MESSAGE_SIZE)
     strcat(update_message, update);
 
-  if (areDevicesReady && wb_position_sensor_get_sampling_period(position_sensors[1])) {
+  if (areDevicesReady &&
+      wb_position_sensor_get_sampling_period(position_sensors[1])) {
     const double value = wb_position_sensor_get_value(position_sensors[1]);
     if (isnan(value))
       snprintf(update, UPDATE_SIZE, "right_wheel_position ");
@@ -320,7 +272,7 @@ void wb_robot_window_step(int time_step) {
     const char name[3] = "XYZ";
     update[0] = '\0';
     for (i = 0; i < 3; ++i) {
-      char s[9];  // "[+-]\d\d\.\d\d\d \0"
+      char s[9]; // "[+-]\d\d\.\d\d\d \0"
       if (isnan(values[i]))
         sprintf(s, "%c ", name[i]);
       else
@@ -337,7 +289,7 @@ void wb_robot_window_step(int time_step) {
     const char name[4] = "Gyro";
     update[0] = '\0';
     for (i = 0; i < 3; ++i) {
-      char s[12];  // "[+-]\d\d\.\d\d\d \0"
+      char s[12]; // "[+-]\d\d\.\d\d\d \0"
       if (isnan(values[i]))
         sprintf(s, "%c ", name[i]);
       else
@@ -350,7 +302,8 @@ void wb_robot_window_step(int time_step) {
     strcat(update_message, update);
 
   if (areDevicesReady && wb_camera_get_sampling_period(camera)) {
-    wbu_default_robot_window_update();  // we send all the update to get the image in base64.
+    wbu_default_robot_window_update(); // we send all the update to get the
+                                       // image in base64.
   }
   if (strlen(update) + strlen(update_message) < UPDATE_MESSAGE_SIZE)
     strcat(update_message, update);
@@ -379,6 +332,4 @@ void wb_robot_window_step(int time_step) {
   free(update_message);
 }
 
-void wb_robot_window_cleanup() {
-  cleanup_ports();
-}
+void wb_robot_window_cleanup() { cleanup_ports(); }
