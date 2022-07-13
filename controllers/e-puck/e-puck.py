@@ -24,9 +24,9 @@ def computeOdometry(leftPositionSensor, rightPositionSensor):
   dl = l * WHEEL_RADIUS         # distance covered by left wheel in meter
   dr = r * WHEEL_RADIUS         # distance covered by right wheel in meter
   da = (dr - dl) / AXLE_LENGTH  # delta orientation
-  print('estimated distance covered by left wheel: ' +  dl + ' m.\n')
-  print('estimated distance covered by right wheel: ' +  dr + ' m.\n')
-  print('estimated change of orientation: % ' +  da + ' rad.\n')
+  print('estimated distance covered by left wheel: ' +  str(dl) + ' m.\n')
+  print('estimated distance covered by right wheel: ' +  str(dr) + ' m.\n')
+  print('estimated change of orientation: % ' +  str(da) + ' rad.\n')
 
 braitenbergCoefficients = [(0.942, -0.22), (0.63, -0.1), (0.5, -0.06),  (-0.06, -0.06),
                                            (-0.06, -0.06), (-0.06, 0.5), (-0.19, 0.63), (-0.13, 0.942)]
@@ -63,11 +63,11 @@ rightPositionSensor = robot.getDevice('right wheel sensor')
 leftPositionSensor.enable(timeStep)
 rightPositionSensor.enable(timeStep)
 
+distanceSensor = []
 for i in range(8):
   # get distance sensors
   deviceName = 'ps' + str(i)
-  distanceSensor = []
-  distanceSensor.append(robot.getDevice(deviceName)) 
+  distanceSensor.append(robot.getDevice(deviceName))
   distanceSensor[i].enable(timeStep)
 
 
@@ -76,15 +76,15 @@ while robot.step(timeStep) != -1:
   sensorsValue = []
   # get sensors values
   for i in range(8):
-    sensorsValue[i] = distanceSensor[i].getValue()
+    sensorsValue.append(distanceSensor[i].getValue())
   a = accelerometer.getValues()
-  print('accelerometer values = ' + a[0] + ' ' + a[1] + ' ' + a[2])
+  print('accelerometer values = %.2f %.2f %.2f' % (a[0], a[1], a[2]))
 
   # compute odometry and speed values
   computeOdometry(leftPositionSensor, rightPositionSensor)
   speed = []
   for i in range(2):
-    speed[i] = 0.0
+    speed.append(0.0)
     for j in range(8):
       speed[i] += braitenbergCoefficients[j][i] * (1.0 - (sensorsValue[j] / RANGE))
   
