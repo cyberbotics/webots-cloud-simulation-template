@@ -81,7 +81,7 @@ while robot.step(timeStep) != -1:
   print('accelerometer values = ' + a[0] + ' ' + a[1] + ' ' + a[2])
 
   # compute odometry and speed values
-  computeOdometry(leftPositionSensor, rightPositionSensor);
+  computeOdometry(leftPositionSensor, rightPositionSensor)
   speed = []
   for i in range(2):
     speed[i] = 0.0
