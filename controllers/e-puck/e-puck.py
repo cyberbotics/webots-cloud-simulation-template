@@ -18,6 +18,10 @@ WHEEL_RADIUS = 0.02
 AXLE_LENGTH = 0.052
 RANGE = (1024 / 2)
 
+braitenbergCoefficients = [(0.942, -0.22), (0.63, -0.1), (0.5, -0.06),  (-0.06, -0.06),
+                                           (-0.06, -0.06), (-0.06, 0.5), (-0.19, 0.63), (-0.13, 0.942)]
+distanceSensors = []
+
 def computeOdometry(leftPositionSensor, rightPositionSensor):
   l = leftPositionSensor.getValue()
   r = rightPositionSensor.getValue()
@@ -28,8 +32,6 @@ def computeOdometry(leftPositionSensor, rightPositionSensor):
   print('estimated distance covered by right wheel: ' +  str(dr) + ' m.\n')
   print('estimated change of orientation: % ' +  str(da) + ' rad.\n')
 
-braitenbergCoefficients = [(0.942, -0.22), (0.63, -0.1), (0.5, -0.06),  (-0.06, -0.06),
-                                           (-0.06, -0.06), (-0.06, 0.5), (-0.19, 0.63), (-0.13, 0.942)]
 
 # initialize Webots
 robot = Robot()
@@ -63,20 +65,19 @@ rightPositionSensor = robot.getDevice('right wheel sensor')
 leftPositionSensor.enable(timeStep)
 rightPositionSensor.enable(timeStep)
 
-distanceSensor = []
 for i in range(8):
   # get distance sensors
   deviceName = 'ps' + str(i)
-  distanceSensor.append(robot.getDevice(deviceName))
-  distanceSensor[i].enable(timeStep)
+  distanceSensors.append(robot.getDevice(deviceName))
+  distanceSensors[i].enable(timeStep)
 
 
 # main loop
 while robot.step(timeStep) != -1:
-  sensorsValue = []
+  sensorsValues = []
   # get sensors values
   for i in range(8):
-    sensorsValue.append(distanceSensor[i].getValue())
+    sensorsValues.append(distanceSensors[i].getValue())
   a = accelerometer.getValues()
   print('accelerometer values = %.2f %.2f %.2f' % (a[0], a[1], a[2]))
 
@@ -86,7 +87,7 @@ while robot.step(timeStep) != -1:
   for i in range(2):
     speed.append(0.0)
     for j in range(8):
-      speed[i] += braitenbergCoefficients[j][i] * (1.0 - (sensorsValue[j] / RANGE))
+      speed[i] += braitenbergCoefficients[j][i] * (1.0 - (sensorsValues[j] / RANGE))
   
   # set speed values
   leftMotor.setVelocity(speed[0])
