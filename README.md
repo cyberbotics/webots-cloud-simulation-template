@@ -4,7 +4,7 @@ Use this repository as a template to deploy a simulation on [webots.cloud](webot
 ## Structure
 The template contains a generic project featuring the e-puck robot.
 The world `e-puck.wbt` is located in the `worlds` folder.
-The controller `e-puck.c` is located in the `controllers/e-puck` folder.
+The controller `e-puck.py` is located in the `controllers/e-puck` folder.
 The `e-puck` robot window is located in the `plugins` folder.
 The `E-puck.proto` PROTO is located in the `protos` folder.
 
@@ -17,10 +17,9 @@ RUN mkdir -p $PROJECT_PATH
 COPY . $PROJECT_PATH
 ```
 
-The following two additional lines allow to compile the controller and the plugin when [webots.cloud](webots.cloud) creates the Docker image.
+The following additional line allows to compile the plugin when [webots.cloud](webots.cloud) creates the Docker image.
 
 ```dockerfile
-RUN cd $PROJECT_PATH/controllers/e-puck && make clean && make
 RUN cd $PROJECT_PATH/plugins/robot_windows/e-puck && make clean && make
 ```
 
