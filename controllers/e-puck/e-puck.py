@@ -65,7 +65,7 @@ rightPositionSensor.enable(timeStep)
 
 for i in range(8):
   # get distance sensors
-  deviceName = 'ps' + i
+  deviceName = 'ps' + str(i)
   distanceSensor = []
   distanceSensor.append(robot.getDevice(deviceName)) 
   distanceSensor[i].enable(timeStep)
