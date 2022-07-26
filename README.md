@@ -31,4 +31,4 @@ Finally, `dockerCompose:theia` sets the workspace for the online IDE.
 This means that with `webots-project/controllers/` every user who logs into the simulation is allowed to modify all controllers located in the `controllers` folder.
 
 More information is available in the [Webots User Guide](https://cyberbotics.com/doc/guide/webots-cloud?version=master#publish-cloud-based-simulations).
-For more complex projects and other configurations you can head to the examples repository: [webots.cloud Simulation Demos](https://github.com/cyberbotics/webots-cloud-simulation-example).
+For more complex projects and other configurations you can head to the examples repository: [webots.cloud Simulation Examples](https://github.com/cyberbotics/webots-cloud-simulation-examples).
