@@ -50,7 +50,7 @@ while robot.step(timeStep) != -1:
   # compute odometry and speed values
   speed = []
   for i in range(2):
-    if sensorsValues[3] > 1000:
+    if sensorsValues[0] > 1000:
       speed.append(0.0)
     else:
       speed.append(5.0)
