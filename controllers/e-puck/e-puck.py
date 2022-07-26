@@ -14,42 +14,17 @@
 
 from controller import Robot
 
-WHEEL_RADIUS = 0.02
-AXLE_LENGTH = 0.052
-RANGE = (1024 / 2)
-
-braitenbergCoefficients = [(0.942, -0.22), (0.63, -0.1), (0.5, -0.06),  (-0.06, -0.06),
-                                           (-0.06, -0.06), (-0.06, 0.5), (-0.19, 0.63), (-0.13, 0.942)]
 distanceSensors = []
-
-def computeOdometry(leftPositionSensor, rightPositionSensor):
-  l = leftPositionSensor.getValue()
-  r = rightPositionSensor.getValue()
-  dl = l * WHEEL_RADIUS         # distance covered by left wheel in meter
-  dr = r * WHEEL_RADIUS         # distance covered by right wheel in meter
-  da = (dr - dl) / AXLE_LENGTH  # delta orientation
-  print('estimated distance covered by left wheel: ' +  str(dl) + ' m.\n')
-  print('estimated distance covered by right wheel: ' +  str(dr) + ' m.\n')
-  print('estimated change of orientation: % ' +  str(da) + ' rad.\n')
-
 
 # initialize Webots
 robot = Robot()
 
 if robot.getModel() == 'GCtronic e-puck2':
   print('e-puck2 robot\n')
-  time_step = 64
-  camera_time_step = 64
+  timeStep = 64
 else: # original e-puck
   print("e-puck robot\n")
   timeStep = 256
-  cameraTimeStep = 1024
-
-# get and enable the camera and accelerometer
-camera = robot.getDevice('camera')
-camera.enable(cameraTimeStep)
-accelerometer = robot.getDevice('accelerometer')
-accelerometer.enable(timeStep)
 
 # get a handler to the motors and set target position to infinity (speed control).
 leftMotor = robot.getDevice('left wheel motor')
@@ -59,18 +34,11 @@ rightMotor.setPosition(float('+inf'))
 leftMotor.setVelocity(0.0)
 rightMotor.setVelocity(0.0)
 
-# get a handler to the position sensors and enable them.
-leftPositionSensor = robot.getDevice('left wheel sensor')
-rightPositionSensor = robot.getDevice('right wheel sensor')
-leftPositionSensor.enable(timeStep)
-rightPositionSensor.enable(timeStep)
-
 for i in range(8):
   # get distance sensors
   deviceName = 'ps' + str(i)
   distanceSensors.append(robot.getDevice(deviceName))
   distanceSensors[i].enable(timeStep)
-
 
 # main loop
 while robot.step(timeStep) != -1:
@@ -78,16 +46,14 @@ while robot.step(timeStep) != -1:
   # get sensors values
   for i in range(8):
     sensorsValues.append(distanceSensors[i].getValue())
-  a = accelerometer.getValues()
-  print('accelerometer values = %.2f %.2f %.2f' % (a[0], a[1], a[2]))
 
-  # compute odometry and speed values
-  computeOdometry(leftPositionSensor, rightPositionSensor)
+  # go forward until reaching a wall
   speed = []
   for i in range(2):
-    speed.append(0.0)
-    for j in range(8):
-      speed[i] += braitenbergCoefficients[j][i] * (1.0 - (sensorsValues[j] / RANGE))
+    if sensorsValues[0] > 100:
+      speed.append(0.0)
+    else:
+      speed.append(3.0)
   
   # set speed values
   leftMotor.setVelocity(speed[0])
