@@ -47,10 +47,10 @@ while robot.step(timeStep) != -1:
   for i in range(8):
     sensorsValues.append(distanceSensors[i].getValue())
 
-  # compute odometry and speed values
+  # go forward until reaching a wall
   speed = []
   for i in range(2):
-    if sensorsValues[0] > 1000:
+    if sensorsValues[0] > 100:
       speed.append(0.0)
     else:
       speed.append(5.0)
